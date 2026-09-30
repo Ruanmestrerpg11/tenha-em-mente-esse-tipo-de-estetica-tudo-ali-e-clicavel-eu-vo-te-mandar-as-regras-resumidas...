@@ -20,3 +20,6 @@ export function roll(expression: string) {
   const dice = Array.from({ length: quantity }, () => 1 + Math.floor(Math.random() * sides));
   return { dice, modifier, total: dice.reduce((a, b) => a + b, modifier), expression: `${quantity}d${sides}${modifier ? (modifier > 0 ? '+' : '') + modifier : ''}` };
 }
+
+export function karmaMaximum(mente:number,espirito:number){ return Math.max(1,Math.floor((mente*20)/2+(espirito*20)/4)); }
+export function karmaStage(value:number,max:number){const percent=value/Math.max(1,max)*100;return percent>=70?"berserker":percent>=50?"gaki":"normal";}
