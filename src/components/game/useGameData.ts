@@ -20,6 +20,8 @@ export function useGameData() {
         if (Array.isArray(saved.characters)) setCharacters(saved.characters);
         if (Array.isArray(saved.campaigns)) setCampaigns(saved.campaigns);
         if (Array.isArray(saved.npcs)) setNpcs(saved.npcs);
+      } else {
+        window.localStorage.setItem('herdeiros-demo-v1', JSON.stringify({ characters: [makeCharacter()], campaigns: [makeCampaign()], npcs: [makeNpc()] }));
       }
     } catch { /* Invalid demo data starts a fresh session. */ }
     setDemoHydrated(true);
