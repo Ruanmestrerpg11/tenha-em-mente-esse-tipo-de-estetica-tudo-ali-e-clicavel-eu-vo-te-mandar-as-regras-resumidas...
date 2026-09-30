@@ -27,7 +27,7 @@ export function GameApp() {
  const data=useGameData();
  const [area,setArea]=useState<Area>('jogador'); const [sheetTab,setSheetTab]=useState<SheetTab>('Geral'); const [sheetId,setSheetId]=useState<string|null>(null); const [campaignId,setCampaignId]=useState<string|null>(null); const [masterTab,setMasterTab]=useState('NPCs e inimigos'); const [mobileNav,setMobileNav]=useState(false); const [authOpen,setAuthOpen]=useState(false);
  const [rolls,setRolls]=useState<{id:string; expression:string; dice:number[]; modifier:number; total:number; source?:string}[]>([]);
- const character=data.characters.find(c=>c.id===sheetId) ?? data.characters[0]; const campaign=data.campaigns.find(c=>c.id===campaignId) ?? data.campaigns[0]; const campaignNpcs=data.npcs;
+ const character=data.characters.find(c=>c.id===sheetId) ?? data.characters[0]; const campaign=data.campaigns.find(c=>c.id===campaignId) ?? data.campaigns[0]; const campaignNpcs=data.npcs.filter(n=>!('campaign_id' in n) || n.campaign_id===campaign?.id);
  useEffect(()=>{ const path=window.location.pathname; if(path.includes('mestre'))setArea('mestre'); else if(path.includes('mesa'))setArea('mesa'); else if(path.includes('rolador'))setArea('rolador'); else if(path.includes('regras'))setArea('regras'); },[]);
  function go(next:Area) { setArea(next); setMobileNav(false); window.history.replaceState({},'',next==='jogador'?'/':`/${next}`); window.scrollTo({top:0,behavior:'smooth'}); }
  function throwDice(expression:string,source?:string) { const result=roll(expression); if(result) { const entry={...result,id:crypto.randomUUID(),source}; setRolls(prev=>[entry,...prev].slice(0,40)); return result; } return null; }

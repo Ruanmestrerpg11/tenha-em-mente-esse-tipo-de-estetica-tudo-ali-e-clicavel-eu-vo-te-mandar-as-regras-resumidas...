@@ -9,6 +9,22 @@ export function useGameData() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([makeCampaign()]);
   const [npcs, setNpcs] = useState<Npc[]>([makeNpc()]);
   const [error, setError] = useState('');
+  const [demoHydrated, setDemoHydrated] = useState(false);
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem('herdeiros-demo-v1');
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (Array.isArray(saved.characters)) setCharacters(saved.characters);
+        if (Array.isArray(saved.campaigns)) setCampaigns(saved.campaigns);
+        if (Array.isArray(saved.npcs)) setNpcs(saved.npcs);
+      }
+    } catch { /* Invalid demo data starts a fresh session. */ }
+    setDemoHydrated(true);
+  }, []);
+  useEffect(() => {
+    if (demoHydrated && ready && !userId) window.localStorage.setItem('herdeiros-demo-v1', JSON.stringify({ characters, campaigns, npcs }));
+  }, [demoHydrated, ready, userId, characters, campaigns, npcs]);
   const load = useCallback(async (id: string) => {
     const [sheets, rooms, enemies] = await Promise.all([supabase.from('sheets').select('*').eq('user_id', id).order('created_at'), supabase.from('campaigns').select('*').eq('master_id', id).order('created_at'), supabase.from('npcs').select('*').order('created_at')]);
     if (sheets.error || rooms.error || enemies.error) setError(sheets.error?.message || rooms.error?.message || enemies.error?.message || 'Não foi possível carregar os dados.');
