@@ -15,6 +15,13 @@
       "when": 1790744084404,
       "tag": "0001_add_profiles_and_online_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790744095602,
+      "tag": "0002_fix_online_membership_policy",
+      "breakpoints": true
     }
   ]
 }

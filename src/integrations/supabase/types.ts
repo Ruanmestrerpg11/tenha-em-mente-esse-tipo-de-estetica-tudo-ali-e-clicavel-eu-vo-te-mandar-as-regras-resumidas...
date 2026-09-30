@@ -275,6 +275,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_campaign_master: { Args: { p_campaign: string }; Returns: boolean }
       join_campaign: {
         Args: { p_code: string; p_password: string }
         Returns: string
