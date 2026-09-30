@@ -1,0 +1,4 @@
+- [x] Examinar imagens, PDF, repositório e páginas públicas de referência.
+- [x] Preparar armazenamento seguro para fichas, mesas e NPCs.
+- [ ] Construir fichas, mesa, rolador e consulta de regras com controles funcionais.
+- [ ] Verificar aparência e interações no navegador.
