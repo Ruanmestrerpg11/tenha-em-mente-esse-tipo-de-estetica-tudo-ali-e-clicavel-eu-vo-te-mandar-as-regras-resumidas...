@@ -5,9 +5,9 @@ import { makeCampaign, makeCharacter, makeNpc, type Campaign, type Character, ty
 export function useGameData() {
   const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
-  const [characters, setCharacters] = useState<Character[]>([makeCharacter()]);
-  const [campaigns, setCampaigns] = useState<Campaign[]>([makeCampaign()]);
-  const [npcs, setNpcs] = useState<Npc[]>([makeNpc()]);
+  const [characters, setCharacters] = useState<Character[]>(() => [makeCharacter()]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(() => [makeCampaign()]);
+  const [npcs, setNpcs] = useState<Npc[]>(() => [makeNpc()]);
   const [error, setError] = useState('');
   const [profileName, setProfileName] = useState('');
   const [memberships, setMemberships] = useState<{campaign_id:string;user_id:string;character_id:string|null}[]>([]);
@@ -28,7 +28,7 @@ export function useGameData() {
     if (demoHydrated && ready && !userId) window.localStorage.setItem('herdeiros-demo-v1', JSON.stringify({ characters, campaigns, npcs }));
   }, [demoHydrated, ready, userId, characters, campaigns, npcs]);
   const load = useCallback(async (id: string) => {
-    const [sheets, rooms, enemies, memberRows, profile] = await Promise.all([supabase.from('sheets').select('*').eq('user_id', id).order('created_at'), supabase.from('campaigns').select('*').eq('master_id', id).order('created_at'), supabase.from('npcs').select('*').order('created_at'), supabase.from('campaign_members').select('*'),supabase.from('profiles').select('display_name').eq('id',id).maybeSingle()]);
+    const [sheets, rooms, enemies, memberRows, profile] = await Promise.all([supabase.from('sheets').select('*').eq('user_id', id).order('created_at'), supabase.from('campaigns').select('*').order('created_at'), supabase.from('npcs').select('*').order('created_at'), supabase.from('campaign_members').select('*'),supabase.from('profiles').select('display_name').eq('id',id).maybeSingle()]);
     if (sheets.error || rooms.error || enemies.error || memberRows.error) setError(sheets.error?.message || rooms.error?.message || enemies.error?.message || memberRows.error?.message || 'Não foi possível carregar os dados.');
     else { setCharacters((sheets.data ?? []) as unknown as Character[]); setCampaigns((rooms.data ?? []) as unknown as Campaign[]); setNpcs((enemies.data ?? []) as unknown as Npc[]); setMemberships((memberRows.data ?? []) as {campaign_id:string;user_id:string;character_id:string|null}[]); setProfileName(profile.data?.display_name || ''); setError(''); }
     setReady(true);
