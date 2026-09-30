@@ -11,6 +11,7 @@ export function useGameData() {
   const [error, setError] = useState('');
   const [profileName, setProfileName] = useState('');
   const [memberships, setMemberships] = useState<{campaign_id:string;user_id:string;character_id:string|null}[]>([]);
+  const [partyCharacters, setPartyCharacters] = useState<Character[]>([]);
   const [demoHydrated, setDemoHydrated] = useState(false);
   useEffect(() => {
     try {
@@ -32,10 +33,10 @@ export function useGameData() {
   const load = useCallback(async (id: string) => {
     const [sheets, rooms, enemies, memberRows, profile] = await Promise.all([supabase.from('sheets').select('*').eq('user_id', id).order('created_at'), supabase.from('campaigns').select('*').order('created_at'), supabase.from('npcs').select('*').order('created_at'), supabase.from('campaign_members').select('*'),supabase.from('profiles').select('display_name').eq('id',id).maybeSingle()]);
     if (sheets.error || rooms.error || enemies.error || memberRows.error) setError(sheets.error?.message || rooms.error?.message || enemies.error?.message || memberRows.error?.message || 'Não foi possível carregar os dados.');
-    else { setCharacters((sheets.data ?? []) as unknown as Character[]); setCampaigns((rooms.data ?? []) as unknown as Campaign[]); setNpcs((enemies.data ?? []) as unknown as Npc[]); setMemberships((memberRows.data ?? []) as {campaign_id:string;user_id:string;character_id:string|null}[]); setProfileName(profile.data?.display_name || ''); setError(''); }
+    else { setCharacters((sheets.data ?? []) as unknown as Character[]); setCampaigns((rooms.data ?? []) as unknown as Campaign[]); setNpcs((enemies.data ?? []) as unknown as Npc[]); setMemberships((memberRows.data ?? []) as {campaign_id:string;user_id:string;character_id:string|null}[]); const memberIds=(memberRows.data??[]).map(m=>m.character_id).filter((value):value is string=>!!value); if(memberIds.length){ const party=await supabase.from('sheets').select('*').in('id',memberIds); if(party.error)setError(party.error.message); else setPartyCharacters((party.data??[]) as unknown as Character[]); }else setPartyCharacters([]); setProfileName(profile.data?.display_name || ''); setError(''); }
     setReady(true);
   }, []);
-  useEffect(() => { let active = true; supabase.auth.getUser().then(({ data }) => { if (!active) return; const id = data.user?.id ?? null; setUserId(id); if (id) void load(id); else setReady(true); }); return () => { active = false; }; }, [load]);
+  useEffect(() => { let active = true; supabase.auth.getUser().then(async ({ data }) => { if (!active) return; const id = data.user?.id ?? null; setUserId(id); if (id) { const name=data.user?.user_metadata?.['display_name']; if(typeof name==='string'&&name.trim()) await supabase.from('profiles').upsert({id,display_name:name.trim().slice(0,60)},{onConflict:'id',ignoreDuplicates:true}); if(active)void load(id); }else setReady(true); }); const {data:{subscription}}=supabase.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT'||event==='USER_UPDATED')void supabase.auth.getUser().then(({data})=>{if(!active)return; const next=data.user?.id??null;setUserId(next);if(next)void load(next);else {setMemberships([]);setPartyCharacters([]);setReady(true)};});}); return () => { active = false; subscription.unsubscribe(); }; }, [load]);
   async function saveCharacter(character: Character) {
     setCharacters(prev => prev.map(c => c.id === character.id ? character : c));
     if (!userId) return;
@@ -59,5 +60,5 @@ export function useGameData() {
   async function selectMemberCharacter(campaignId:string,characterId:string|null) {if(!userId)return; const {error:err}=await supabase.from('campaign_members').update({character_id:characterId}).eq('campaign_id',campaignId).eq('user_id',userId); if(err)setError(err.message); else setMemberships(prev=>prev.map(m=>m.campaign_id===campaignId&&m.user_id===userId?{...m,character_id:characterId}:m));}
   async function leaveRoom(campaignId:string){if(!userId)return; const {error:err}=await supabase.from('campaign_members').delete().eq('campaign_id',campaignId).eq('user_id',userId); if(err)setError(err.message);else await load(userId);}
   useEffect(()=>{if(!userId)return; const channel=supabase.channel(`herdeiros-live-${userId}`).on('postgres_changes',{event:'*',schema:'public',table:'campaigns'},()=>void load(userId)).on('postgres_changes',{event:'*',schema:'public',table:'npcs'},()=>void load(userId)).on('postgres_changes',{event:'*',schema:'public',table:'campaign_members'},()=>void load(userId)).on('postgres_changes',{event:'*',schema:'public',table:'sheets'},()=>void load(userId)).subscribe(); return ()=>{void supabase.removeChannel(channel)}},[userId,load]);
-  return { userId, ready, characters, campaigns, npcs, memberships, profileName, error, saveProfile, setRoomPassword, joinRoom, selectMemberCharacter, leaveRoom, saveCharacter, addCharacter, deleteCharacter, saveCampaign, addCampaign, saveNpc, addNpc, deleteNpc };
+  return { userId, ready, characters, partyCharacters, campaigns, npcs, memberships, profileName, error, saveProfile, setRoomPassword, joinRoom, selectMemberCharacter, leaveRoom, saveCharacter, addCharacter, deleteCharacter, saveCampaign, addCampaign, saveNpc, addNpc, deleteNpc };
 }
