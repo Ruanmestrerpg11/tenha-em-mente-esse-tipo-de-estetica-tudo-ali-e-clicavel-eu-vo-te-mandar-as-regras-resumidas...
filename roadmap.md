@@ -1,0 +1,7 @@
+- [x] Examinar imagens, PDF, repositório e páginas públicas de referência.
+- [x] Preparar armazenamento seguro para fichas, mesas e NPCs.
+- [x] Construir fichas, mesa, rolador e consulta de regras com controles funcionais.
+- [x] Verificar aparência e interações no navegador (fluxos públicos e demonstração; duas contas online aguardam teste real).
+- [x] Nome de perfil editável na conta e visível no canto superior direito.
+- [x] Mesas online com código e senha, entrada de jogadores autenticados e atualização ao vivo.
+- [x] Karma máximo calculado pelos atributos e estados Marcas de Gaki / Berserker em 50% / 70%.
