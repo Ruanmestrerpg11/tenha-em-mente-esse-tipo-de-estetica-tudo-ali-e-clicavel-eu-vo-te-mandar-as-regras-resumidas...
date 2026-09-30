@@ -14,7 +14,185 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      campaigns: {
+        Row: {
+          code: string
+          combat_active: boolean
+          created_at: string
+          id: string
+          log: Json
+          master_id: string
+          name: string
+          round: number
+          scene: string
+          turn_index: number
+        }
+        Insert: {
+          code?: string
+          combat_active?: boolean
+          created_at?: string
+          id?: string
+          log?: Json
+          master_id?: string
+          name?: string
+          round?: number
+          scene?: string
+          turn_index?: number
+        }
+        Update: {
+          code?: string
+          combat_active?: boolean
+          created_at?: string
+          id?: string
+          log?: Json
+          master_id?: string
+          name?: string
+          round?: number
+          scene?: string
+          turn_index?: number
+        }
+        Relationships: []
+      }
+      npcs: {
+        Row: {
+          bloqueio: number
+          campaign_id: string
+          corpo: number
+          created_at: string
+          espirito: number
+          esquiva: number
+          hidden: boolean
+          id: string
+          kind: string
+          mente: number
+          name: string
+          notes: string
+          pf_current: number
+          pf_max: number
+          pv_current: number
+          pv_max: number
+        }
+        Insert: {
+          bloqueio?: number
+          campaign_id: string
+          corpo?: number
+          created_at?: string
+          espirito?: number
+          esquiva?: number
+          hidden?: boolean
+          id?: string
+          kind?: string
+          mente?: number
+          name?: string
+          notes?: string
+          pf_current?: number
+          pf_max?: number
+          pv_current?: number
+          pv_max?: number
+        }
+        Update: {
+          bloqueio?: number
+          campaign_id?: string
+          corpo?: number
+          created_at?: string
+          espirito?: number
+          esquiva?: number
+          hidden?: boolean
+          id?: string
+          kind?: string
+          mente?: number
+          name?: string
+          notes?: string
+          pf_current?: number
+          pf_max?: number
+          pv_current?: number
+          pv_max?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "npcs_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sheets: {
+        Row: {
+          concept: string
+          corpo: number
+          created_at: string
+          espirito: number
+          exhaustion: number
+          gs: number
+          id: string
+          inventory: Json
+          karma: number
+          lineage: string
+          mente: number
+          name: string
+          nomenclatures: Json
+          pf_current: number
+          pf_max: number
+          pv_current: number
+          pv_max: number
+          stage: string
+          story: string
+          sync: Json
+          user_id: string
+          weapon: string
+        }
+        Insert: {
+          concept?: string
+          corpo?: number
+          created_at?: string
+          espirito?: number
+          exhaustion?: number
+          gs?: number
+          id?: string
+          inventory?: Json
+          karma?: number
+          lineage?: string
+          mente?: number
+          name?: string
+          nomenclatures?: Json
+          pf_current?: number
+          pf_max?: number
+          pv_current?: number
+          pv_max?: number
+          stage?: string
+          story?: string
+          sync?: Json
+          user_id?: string
+          weapon?: string
+        }
+        Update: {
+          concept?: string
+          corpo?: number
+          created_at?: string
+          espirito?: number
+          exhaustion?: number
+          gs?: number
+          id?: string
+          inventory?: Json
+          karma?: number
+          lineage?: string
+          mente?: number
+          name?: string
+          nomenclatures?: Json
+          pf_current?: number
+          pf_max?: number
+          pv_current?: number
+          pv_max?: number
+          stage?: string
+          story?: string
+          sync?: Json
+          user_id?: string
+          weapon?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
