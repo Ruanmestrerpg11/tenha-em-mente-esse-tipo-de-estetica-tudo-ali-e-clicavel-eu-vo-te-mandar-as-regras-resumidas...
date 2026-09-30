@@ -8,6 +8,13 @@
       "when": 1790743810581,
       "tag": "0000_create_herdeiros_workspace",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790744084404,
+      "tag": "0001_add_profiles_and_online_tables",
+      "breakpoints": true
     }
   ]
 }

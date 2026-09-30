@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      campaign_members: {
+        Row: {
+          campaign_id: string
+          character_id: string | null
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          character_id?: string | null
+          joined_at?: string
+          user_id?: string
+        }
+        Update: {
+          campaign_id?: string
+          character_id?: string | null
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_members_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_members_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "sheets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_secrets: {
+        Row: {
+          campaign_id: string
+          password_hash: string
+        }
+        Insert: {
+          campaign_id: string
+          password_hash: string
+        }
+        Update: {
+          campaign_id?: string
+          password_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_secrets_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: true
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           code: string
@@ -118,6 +177,24 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
       sheets: {
         Row: {
           concept: string
@@ -198,7 +275,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      join_campaign: {
+        Args: { p_code: string; p_password: string }
+        Returns: string
+      }
+      set_campaign_password: {
+        Args: { p_campaign: string; p_password: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
